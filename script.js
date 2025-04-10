@@ -13,6 +13,11 @@ const produtos = [
         titulo: "Fone de Ouvido Bluetooth JBL Tune 510BT",
         preco: "R$ 299,00",
         imagem: "https://images.jbl.com/is/image/JBLContent//fone-example.jpg"
+    },
+    {
+        titulo: "Celular Samsung Galaxy M15 5G, 6.000mAh, Câmera Tripla",
+        preco: "R$ 299,00",
+        imagem: "https://images.jbl.com/is/image/JBLContent//fone-example.jpg"
     }
 ];
  
