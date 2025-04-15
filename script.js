@@ -1,23 +1,31 @@
+const preco = {
+    griezmann: 499.00,
+    neyma: 1.00,
+    messi: 299.00,
+    cristianoRonaldo: 299.00
+};
+
 const produtos = [
     {
-        titulo: "Notebook Dell Inspiron 15, Intel Core i5, 8GB RAM, 256GB SSD",
-        preco: "R$ 3.499,00",
-        imagem: "https://images.dell.com/is/image/DellContent//notebook-example.jpg"
+        titulo: "griezmann",
+        preco: preco.griezmann,
+        imagem: "https://jpimg.com.br/uploads/2017/04/1897829755-griezmann-havia-afirmado-que-atletico-de-madrid-brigaria-contra-o-rebaixamento-na-temporada.jpg"
     },
     {
-        titulo: "Smart TV LG 50' 4K UHD, Inteligência Artificial",
-        preco: "R$ 2.799,00",
-        imagem: "https://images.lg.com/is/image/LGContent//smart-tv-example.jpg"
+        titulo: "oneyma",
+        preco: preco.neyma,
+        imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz8jvT9aAJUPeexGgc4WTOpdc4Jld5qaW3FA&s"
     },
     {
-        titulo: "Fone de Ouvido Bluetooth JBL Tune 510BT",
-        preco: "R$ 299,00",
-        imagem: "https://images.jbl.com/is/image/JBLContent//fone-example.jpg"
+        titulo: "messi",
+        preco: preco.messi,
+        imagem: "https://lncimg.lance.com.br/cdn-cgi/image/width=950,quality=75,fit=pad,format=webp/uploads/2025/04/messi-inter-miami-scaled-aspect-ratio-512-320.jpg"
     },
     {
-        titulo: "Celular Samsung Galaxy M15 5G, 6.000mAh, Câmera Tripla",
-        preco: "R$ 299,00",
-        imagem: "https://images.jbl.com/is/image/JBLContent//fone-example.jpg"
+        titulo: "CristianoRonaldo",
+        preco: preco.cristianoRonaldo,
+        preco: preco.cristianoRonaldo,
+        imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdhHe79aHGHO5SfYZ01rniGOn7--_yPBXC4HIlynkunrmLLU3rli-La4uyaHQq76-ywBUL6RDQ_qzZ4FxW39LM4ERCN9balNn4FJwRUQ"
     }
 ];
  
@@ -77,6 +85,27 @@ function atualizarListaC() {
         `;
         listaC.appendChild(item);
     });
+    const botoesAumentar = document.querySelectorAll('.aumentar');
+    botoesAumentar.forEach(botao => {
+        botao.addEventListener('click', (e) => {
+            const index = e.target.getAttribute('data-index');
+            produtosNaCesta[index].quantidade += 1;
+            atualizarListaC();
+        });
+    });
+ 
+    const botoesDiminuir = document.querySelectorAll('.diminuir');
+    botoesDiminuir.forEach(botao => {
+        botao.addEventListener('click', (e) => {
+            const index = e.target.getAttribute('data-index');
+            if (produtosNaCesta[index].quantidade > 1) {
+                produtosNaCesta[index].quantidade -= 1;
+            } else {
+                produtosNaCesta.splice(index, 1);
+            }
+            atualizarListaC();
+        });
+    });
  
     // Adiciona funcionalidade de remoção
     const botoesRemover = document.querySelectorAll('.remover');
@@ -88,6 +117,7 @@ function atualizarListaC() {
         });
     });
 }
- 
+
 // Adiciona os produtos ao carregar a página
 adicionarProdutosAoContainer();
+
