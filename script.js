@@ -2,7 +2,8 @@ const preco = {
     griezmann: 499.00,
     neyma: 1.00,
     messi: 299.00,
-    cristianoRonaldo: 299.00
+    cristianoRonaldo: 299.00,
+    noronha: 99.00
 };
 
 const produtos = [
@@ -23,18 +24,38 @@ const produtos = [
     },
     {
         titulo: "CristianoRonaldo",
-        preco: preco.cristianoRonaldo,
-        preco: preco.cristianoRonaldo,
+        preco: preco.cristianoRonaldo, 
+        imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdhHe79aHGHO5SfYZ01rniGOn7--_yPBXC4HIlynkunrmLLU3rli-La4uyaHQq76-ywBUL6RDQ_qzZ4FxW39LM4ERCN9balNn4FJwRUQ"
+    },
+    {
+        titulo: "noronha",
+        preco: preco.noronha,
         imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdhHe79aHGHO5SfYZ01rniGOn7--_yPBXC4HIlynkunrmLLU3rli-La4uyaHQq76-ywBUL6RDQ_qzZ4FxW39LM4ERCN9balNn4FJwRUQ"
     }
 ];
- 
+
 // Array para armazenar os produtos adicionados à cesta
 const produtosNaCesta = [];
- 
+
 // Seleciona o container onde os produtos serão exibidos
 const container = document.getElementById('container');
- 
+
+// Seleciona os elementos necessários
+const listaC = document.querySelector('.listaC');
+const overlay = document.querySelector('.overlay');
+
+// Função para mostrar o carrinho
+function mostrarCarrinho() {
+    listaC.classList.add('mostrar');
+    overlay.classList.add('mostrar');
+}
+
+// Função para ocultar o carrinho
+function ocultarCarrinho() {
+    listaC.classList.remove('mostrar');
+    overlay.classList.remove('mostrar');
+}
+
 // Função para adicionar os produtos dinamicamente ao container
 function adicionarProdutosAoContainer() {
     produtos.forEach((produto, index) => {
@@ -43,12 +64,12 @@ function adicionarProdutosAoContainer() {
         divProduto.innerHTML = `
             <img class="ps4" src="${produto.imagem}" alt="${produto.titulo}">
             <h1 class="ps4titulo">${produto.titulo}</h1>
-            <h2 class="preco"><b>${produto.preco}</b></h2>
+            <h2 class="preco"><b>R$ ${produto.preco.toFixed(2)}</b></h2>
             <button class="comprar" data-index="${index}">Comprar</button>
         `;
         container.appendChild(divProduto);
     });
- 
+
     // Adiciona evento de clique aos botões "Comprar"
     const botoesComprar = document.querySelectorAll('.comprar');
     botoesComprar.forEach(botao => {
@@ -58,33 +79,46 @@ function adicionarProdutosAoContainer() {
         });
     });
 }
- 
+
 // Função para adicionar um produto à cesta
 function adicionarProdutoNaCesta(index) {
     const produto = produtos[index];
-    produtosNaCesta.push(produto);
+    const produtoExistente = produtosNaCesta.find(p => p.titulo === produto.titulo);
+
+    if (produtoExistente) {
+        produtoExistente.quantidade += 1; // Incrementa a quantidade se o produto já estiver na cesta
+    } else {
+        produtosNaCesta.push({ ...produto, quantidade: 1 }); // Adiciona o produto com quantidade inicial 1
+    }
     atualizarListaC();
 }
- 
+
 // Função para atualizar a exibição da listaC
 function atualizarListaC() {
     const listaC = document.querySelector('.listaC');
- 
+
     // Remove os itens antigos (exceto o header)
     const itensExistentes = listaC.querySelectorAll('.item-cesta');
     itensExistentes.forEach(item => item.remove());
- 
+
     // Adiciona cada produto na lista
     produtosNaCesta.forEach((produto, index) => {
         const item = document.createElement('div');
         item.classList.add('item-cesta');
         item.innerHTML = `
             <p><strong>${produto.titulo}</strong></p>
-            <p>${produto.preco}</p>
+            <p>R$ ${produto.preco.toFixed( )} x ${produto.quantidade}</p>
+            <p>
+                <button class="diminuir" data-index="${index}">-</button>
+                ${produto.quantidade}
+                <button class="aumentar" data-index="${index}">+</button>
+            </p>
             <button class="remover" data-index="${index}">Remover</button>
         `;
         listaC.appendChild(item);
     });
+
+    // Adiciona funcionalidade de aumentar a quantidade
     const botoesAumentar = document.querySelectorAll('.aumentar');
     botoesAumentar.forEach(botao => {
         botao.addEventListener('click', (e) => {
@@ -93,7 +127,8 @@ function atualizarListaC() {
             atualizarListaC();
         });
     });
- 
+
+    // Adiciona funcionalidade de diminuir a quantidade
     const botoesDiminuir = document.querySelectorAll('.diminuir');
     botoesDiminuir.forEach(botao => {
         botao.addEventListener('click', (e) => {
@@ -106,18 +141,49 @@ function atualizarListaC() {
             atualizarListaC();
         });
     });
- 
-    // Adiciona funcionalidade de remoção
+
+    // Calcula o total dos produtos na cesta
+    const precoTotal = produtosNaCesta.reduce((total, produto) => {
+        return total + produto.preco * produto.quantidade;
+    }, 0);
+
+    // Atualiza ou cria o elemento do total
+    let totalDiv = document.querySelector('.total-preco');
+    if (!totalDiv) {
+        totalDiv = document.createElement('div');
+        totalDiv.classList.add('total-preco');
+        listaC.appendChild(totalDiv);
+    }
+    totalDiv.innerHTML = `<h3 id="Total">Total: R$ ${precoTotal.toFixed()}</h3>`;
+
+    // Adicionei a  funcionalidade de remoção
     const botoesRemover = document.querySelectorAll('.remover');
     botoesRemover.forEach(botao => {
         botao.addEventListener('click', (e) => {
             const index = e.target.getAttribute('data-index');
-            produtosNaCesta.splice(index, 1); // Remove o produto do array
-            atualizarListaC(); // Atualiza a exibição
+            produtosNaCesta.splice(index, 1); 
+            atualizarListaC(); 
         });
     });
 }
 
-// Adiciona os produtos ao carregar a página
+
+function adicionarEventosComprar() {
+    const botoesComprar = document.querySelectorAll('.comprar');
+    botoesComprar.forEach(botao => {
+        botao.addEventListener('click', (e) => {
+            const index = e.target.getAttribute('data-index');
+            adicionarProdutoNaCesta(index);
+            mostrarCarrinho(); 
+        });
+    });
+}
+
+
+document.querySelector('.excluir').addEventListener('click', ocultarCarrinho);
+overlay.addEventListener('click', ocultarCarrinho);
+
+
 adicionarProdutosAoContainer();
+adicionarEventosComprar();
 
