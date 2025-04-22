@@ -35,3 +35,36 @@ const produtos = [
 ];
 
 // Array para armazenar os produtos adicionados à cesta
+const produtosNaCesta = [];
+
+// Seleciona o container onde os produtos serão exibidos
+const container = document.getElementById('container');
+
+// Função para adicionar os produtos dinamicamente ao container
+function adicionarProdutosAoContainer() {
+    produtos.forEach((produto, index) => {
+        const divProduto = document.createElement('div');
+        divProduto.classList.add('produto');
+        divProduto.innerHTML = `
+            <img class="ps4" src="${produto.imagem}" alt="${produto.titulo}">
+            <h1 class="ps4titulo">${produto.titulo}</h1>
+            <h2 class="preco"><b>R$ ${produto.preco.toFixed(2)}</b></h2>
+            <button class="comprar" data-index="${index}">Comprar</button>
+        `;
+        container.appendChild(divProduto);
+    });
+
+    // Adiciona evento de clique aos botões "Comprar"
+    const botoesComprar = document.querySelectorAll('.comprar');
+    botoesComprar.forEach(botao => {
+        botao.addEventListener('click', (e) => {
+            const index = e.target.getAttribute('data-index');
+            adicionarProdutoNaCesta(index);
+        });
+    });
+}
+
+adicionarProdutosAoContainer();
+
+
+
